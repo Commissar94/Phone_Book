@@ -8,31 +8,24 @@ import java.util.List;
 public class Main {
     public static void main(String[] args) throws IOException {
 
-        String phoneBookPath = "C:\\Users\\Andrey\\Downloads\\directory.txt";
+        String phoneBookPath = "C:\\Users\\Andrey\\Downloads\\directory.txt";  //small_directory.txt or directory.txt
         String findPath = "C:\\Users\\Andrey\\Downloads\\find.txt";
 
-        List<String> findList = Files.readAllLines(Paths.get(findPath));
-        List<String> phoneBookList = Files.readAllLines(Paths.get(phoneBookPath));
+        /* Get all the lines from the files into lists */
+        List<String> phoneBook = Files.readAllLines(Paths.get(phoneBookPath));
+        List<String> find = Files.readAllLines(Paths.get(findPath));
 
-        long lines = 0;
-        System.out.println("Start searching...");
-        long startTime = System.currentTimeMillis();
+        SearchAndSorting newSearch = new SearchAndSorting(phoneBook, find);
 
-        for (int i = 0; i < phoneBookList.size(); i++) {
-            String currentNumberAndPerson = phoneBookList.get(i);
-            String currentPerson = currentNumberAndPerson.substring(currentNumberAndPerson.indexOf(" ")).substring(1);
-            for (int j = 0; j < findList.size(); j++) {
-                if (currentPerson.equals(findList.get(j))) {
-                    lines = lines + 1;
-                }
-            }
+        System.out.println("Start searching (linear search)...");
+        newSearch.linearSearch();
+        newSearch.output(false);
+        newSearch.bubbleSort();
+        if (newSearch.isTooLong) {
+            newSearch.linearSearch();
+        } else {
+            newSearch.jumpSearch();
         }
-
-        long estimatedTime = System.currentTimeMillis() - startTime;
-        long min = estimatedTime / 60000;
-        long sec = estimatedTime / 1000;
-        long ms = estimatedTime - min*60000 - sec*1000;
-        System.out.printf("Found %d / 500 entries. Time taken: %d min. %d sec. %d ms.%n", lines, min,
-                sec, ms);
+        newSearch.output(true);
     }
 }
